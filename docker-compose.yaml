@@ -1,0 +1,57 @@
+services:
+  llm:
+    image: ghcr.io/ggml-org/llama.cpp:server-vulkan
+    container_name: perfectionist-llm
+    ports:
+      - "26278:26278"
+    devices:
+      - /dev/kfd
+      - /dev/dri
+    group_add:
+      - video
+    volumes:
+      - ./models:/models:z
+    # environment:
+    #   - GGML_VK_VISIBLE_DEVICES=1
+    command: >
+      --model /models/Gemma4-26B-A4B-QAT-Uncensored-HauhauCS-Balanced-Q4_K_M.gguf
+      --alias perfectionist-llm
+      --host 0.0.0.0
+      --port 26278
+      --temp 0.6
+      --top-k 64
+      --top-p 0.9
+      --min-p 0.05
+      --repeat-penalty 1.1
+      --ctx-size 50000
+      --n-gpu-layers 999
+      --flash-attn on
+      --jinja
+      --spec-type draft-mtp
+      --spec-draft-model /models/mtp-gemma-4-26B-A4B-it.gguf
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:26278/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+    restart: unless-stopped
+
+  perfectionist:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    container_name: perfectionist-main
+    ports:
+      - "26279:26279"
+
+    environment:
+      OLLAMA_BASE_URL: http://localhost:26278
+      PYTHONUNBUFFERED: 1
+    depends_on:
+      llm:
+        condition: service_healthy
+    restart: unless-stopped
