@@ -5,7 +5,4 @@ from langgraph.graph import MessagesState
 
 class GraphState(MessagesState):
     master_query: str
-    open_questions: list[str]
-    answered_questions: dict[str,str]
-    iteration_budget: int
-    
+    current_queries: list[str]
