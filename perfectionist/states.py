@@ -6,3 +6,4 @@ from langgraph.graph import MessagesState
 class GraphState(MessagesState):
     master_query: str
     current_queries: list[str]
+    search_results: list[dict]

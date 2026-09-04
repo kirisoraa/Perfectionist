@@ -1,9 +1,10 @@
-duckduckgo-search
-pydantic
+ddgs
+gradio
 langgraph
 langchain
 langchain-core
 langchain-openai
 langchain-community
 langfuse
-gradio
+pydantic
+trafilatura

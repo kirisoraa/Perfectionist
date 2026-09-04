@@ -21,11 +21,14 @@ Prefer concise, concrete, focused questions to overlapping and lengthy ones.
 
 def constructor_node(state: GraphState) -> dict:
     llm = get_llm()
-    user_query = state['messages'][-1].content
+    user_query = state['master_query']
     context = [SystemMessage(content=CONSTRUCTOR_SYSTEM_PROMPT+'\n'+user_query)]
 
     response = llm.invoke(context)
 
-    print("CONSTRUCTOR OUT:", response)
-    return {"messages": [response]}
+    print("CONSTRUCTOR OUT:", response.queries)
+    return {
+        "current_queries": response.queries,
+        "messages": ", ".join(response.queries)
+    }
 
