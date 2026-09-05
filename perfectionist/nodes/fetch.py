@@ -13,11 +13,10 @@ def fetch_node(state: GraphState) -> dict:
         link = search_result['href']
         content = extract(fetch_url(link), output_format="markdown", with_metadata=True)
         if content:
-            search_results[i]['content'] = content
-            fetch_results.append(search_results[i])
+            res = search_results[i]
+            res['content'] = content
+            fetch_results.append(res)
         
 
 
-    # return search_results
-
-    return {'messages': '\n###########################\n'.join(i['content'] for i in fetch_results)}
+    return {'search_results': fetch_results}
